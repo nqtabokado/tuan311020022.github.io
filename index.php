@@ -6,6 +6,6 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Test html</h1>
+    <h1>Test php</h1>
 </body>
 </html>

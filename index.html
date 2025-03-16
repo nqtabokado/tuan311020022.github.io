@@ -431,29 +431,56 @@
         </div>
         
         <script>
-            document.getElementById("contact-form").addEventListener("submit", function(event) {
-                event.preventDefault();
+            // document.getElementById("contact-form").addEventListener("submit", function(event) {
+            //     event.preventDefault();
                 
-                const formData = {
-                    name: document.getElementById("name").value,
-                    address: document.getElementById("address").value,
-                    phone: document.getElementById("phone").value,
-                    email: document.getElementById("email").value,
-                    message: document.getElementById("message").value
-                };
+            //     const formData = {
+            //         name: document.getElementById("name").value,
+            //         address: document.getElementById("address").value,
+            //         phone: document.getElementById("phone").value,
+            //         email: document.getElementById("email").value,
+            //         message: document.getElementById("message").value
+            //     };
                 
-                fetch("https://script.google.com/macros/s/AKfycbxHxrmaZlQl1NQcQAmabwTWSq76t2EezdeozlFMqxUMb8qiZ1q7K4aVT8tWnNRWggdnPw/exec", {
-                    method: "POST",
-                    body: JSON.stringify(formData),
-                    headers: { "Content-Type": "application/json" }
-                })
-                .then(response => response.text())
-                .then(data => {
-                    alert("Đã gửi thành công!");
-                    document.getElementById("contact-form").reset();
-                })
-                .catch(error => alert("Lỗi: " + error));
-            });
+            //     fetch("https://script.google.com/macros/s/AKfycbxHxrmaZlQl1NQcQAmabwTWSq76t2EezdeozlFMqxUMb8qiZ1q7K4aVT8tWnNRWggdnPw/exec", {
+            //         method: "POST",
+            //         body: JSON.stringify(formData),
+            //         headers: { "Content-Type": "application/json" }
+            //     })
+            //     .then(response => response.text())
+            //     .then(data => {
+            //         alert("Đã gửi thành công!");
+            //         document.getElementById("contact-form").reset();
+            //     })
+            //     .catch(error => alert("Lỗi: " + error));
+
+
+
+                document.getElementById("contact-form").addEventListener("submit", function(event) {
+                    event.preventDefault();
+                    
+                    const formData = {
+                        name: document.getElementById("name").value,
+                        address: document.getElementById("address").value,
+                        phone: document.getElementById("phone").value,
+                        email: document.getElementById("email").value,
+                        message: document.getElementById("message").value
+                    };
+
+                    fetch("https://script.google.com/macros/s/AKfycbyDMvqACCwcetuCIaMMRrMECcgsWblHcUCPCjcd4_3-lJMohx-M6M5rp_DZKoAreXuaCw/exec", {
+                        method: "POST",
+                        body: JSON.stringify(formData),  // Gửi dữ liệu dạng plain text
+                        headers: { "Content-Type": "text/plain" }  // Đổi từ JSON sang text/plain
+                    })
+                    .then(response => response.text())  // Đọc response dưới dạng text
+                    .then(data => {
+                        console.log("Server response:", data);
+                        alert("Đã gửi thành công!");
+                        document.getElementById("contact-form").reset();
+                    })
+                    .catch(error => console.error("Lỗi:", error));
+                });
+            // });
         </script>
 
         <div class="video-section">

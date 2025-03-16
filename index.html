@@ -6,12 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nhà Gỗ Tín Phát</title>
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             background-color: #0d47a1;
             margin: 0;
             padding: 0;
             color: white;
-            font-family: "Work Sans", sans-serif;
+            font-family: Arial, sans-serif;
+            /* Đảm bảo kiểu chữ giống nhau */
         }
 
         .container {
@@ -89,13 +94,15 @@
 
         .title {
             font-size: 50px;
-            font-family: "Open Sans", sans-serif;
+            font-family: Arial, sans-serif;
+            /* Đảm bảo kiểu chữ giống nhau */
             font-weight: bold;
         }
 
         .subtitle {
             font-size: 20px;
-            font-family: "Open Sans", sans-serif;
+            font-family: Arial, sans-serif;
+            /* Đảm bảo kiểu chữ giống nhau */
             font-weight: bold;
         }
 
@@ -122,7 +129,8 @@
 
         .content h2 {
             font-size: 24px;
-            font-family: "Fraunces", serif;
+            font-family: Arial, sans-serif;
+            /* Đảm bảo kiểu chữ giống nhau */
             font-weight: bold;
             text-align: center;
             text-decoration: underline;
@@ -199,38 +207,31 @@
         }
 
         .video-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto auto;
-            gap: 20px;
+            display: flex;
             justify-content: center;
+            align-items: center;
+            gap: 20px;
         }
 
         .video-left,
-        .video-right-top,
-        .video-right-center,
-        .map-container {
+        .video-right,
+        .video-middle {
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
         .video-left iframe,
-        .video-right-top iframe,
-        .video-right-center iframe {
-            width: 320px;
-            height: 180px;
+        .video-right iframe {
+            width: 300px;
+            height: 200px;
             border-radius: 10px;
             border: 2px solid white;
         }
 
-        .video-right-center {
-            background: #ccc;
-            width: 320px;
-            height: 180px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .video-middle iframe {
+            width: 400px;
+            height: 250px;
             border-radius: 10px;
             border: 2px solid white;
         }
@@ -277,12 +278,15 @@
 
         .form-container input,
         .form-container textarea {
+            font-family: Arial, sans-serif;
+            /* Đảm bảo kiểu chữ giống nhau */
             width: 90%;
             padding: 10px;
             margin: 5px 0;
             border: 2px solid #0d6efd;
             border-radius: 5px;
             font-size: 16px;
+            font-weight: bold;
             outline: none;
         }
 
@@ -307,19 +311,81 @@
         .form-container button:hover {
             background: #0b3c91;
         }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            display: flex;
+            flex-direction: row;
+            background: #1a3d7c;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 700px;
+            color: white;
+            position: relative;
+            align-items: center;
+        }
+
+        .popup-images {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .popup-images img {
+            width: 150px;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .popup-images img:nth-child(2) {
+            margin-left: 20px;
+        }
+
+        .popup-images img:nth-child(3) {
+            margin-left:
+        }
+
+        .popup-text {
+            flex: 1;
+            text-align: left;
+            padding-left: 50px;
+        }
+
+        .popup button.close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
 <body>
-    <div class="header">
+    <div id="home" class="header">
         <nav class="nav">
-            <a href="#">TRANG CHỦ</a>
-            <a href="#">GIỚI THIỆU</a>
+            <a href="#home">TRANG CHỦ</a>
+            <a href="#about">GIỚI THIỆU</a>
             <div class="logo">
                 <img src="img/logo.png" alt="Nhà Gỗ Tín Phát">
             </div>
-            <a href="#">SẢN PHẨM</a>
-            <a href="#">LIÊN HỆ</a>
+            <a href="#products">SẢN PHẨM</a>
+            <a href="#contact">LIÊN HỆ</a>
         </nav>
     </div>
     <div class="banner">
@@ -332,10 +398,10 @@
     </div>
 
 
-    <div class="media-text">
+    <div id="about" class="media-text">
         <img src="https://sell108.wordpress.com/wp-content/uploads/2025/03/7-3.jpg?w=1024" alt="">
         <div class="content">
-            <h2>VỀ CHÚNG TÔI</h2>
+            <p style="text-decoration: underline; font-weight: bold;">VỀ CHÚNG TÔI</p>
             <p>
                 Công ty Nhà gỗ Tín Phát khẳng định vị thế và tầm nhìn thông qua các thiết kế công trình nổi bật, dẫn đầu
                 xu hướng trong ngành nhà gỗ tại Việt Nam. Với mục tiêu mang đến những công trình nhà gỗ đẹp mắt, chất
@@ -348,7 +414,7 @@
     </div>
 
     <div class="why-choose-us">
-        <h2 style="margin-left: 70px;">VÌ SAO NÊN CHỌN CHÚNG TÔI</h2>
+        <p style="text-decoration: underline; margin-left: 40px; font-weight: bold;">VÌ SAO NÊN CHỌN CHÚNG TÔI</p>
         <ul class="list">
             <p><b>1.</b> Chất lượng sản phẩm: Xưởng luôn sử dụng các loại gỗ tự nhiên chất lượng cao và áp dụng quy
                 trình sản xuất hiện đại, đảm bảo sản phẩm có độ bền cao và tính thẩm mỹ vượt trội.</p>
@@ -362,139 +428,147 @@
         </ul>
     </div>
 
-    <div class="products">
-        <h2>SẢN PHẨM</h2>
+    <div id="products" class="products">
+        <p style="text-decoration: underline; font-weight: bold;">SẢN PHẨM</p>
         <p>Nhà Gỗ Tín Phát đã hoàn thành nhiều công trình nhà gỗ đẹp mắt và chất lượng tại Thạch Thất và các khu vực
             xung quanh. Mỗi sản phẩm của chúng tôi mang đến khách hàng đều là sự tỉ mỉ trong từng họa tiết, hoa văn được
             những nghệ nhân làng nghề Chàng Sơn điêu khắc thủ công. Một số công trình nổi bật bao gồm:
         </p>
         <div class="product-images">
             <div class="image-row">
-                <img style="margin-right: 100px" src="img/image1.jpg" alt="Nhà gỗ 1">
-                <img src="img/image2.jpg" alt="Nhà gỗ 2">
+                <img style="margin-right: 100px" src="img/image1.jpg" alt="Nhà gỗ 1"
+                    onclick="openPopup('img/image1.jpg', 'Nhà Gỗ Biệt Thự', 'Một trong những phong cách biệt thự gỗ phổ biến nhất hiện nay đó chính là thiết kế nhà gỗ biệt thự. Giống với biệt thự hiện đại thì nhà gỗ biệt thự cần phải có cách bài trí mặt bằng không gian 1 cách linh hoạt, nhưng vẫn đảm bảo sự tiện nghi và độc đáo. Các công trình biệt thự gỗ của Tín Phát luôn có thiết kế sang trọng, hiện đại nhưng vẫn giữ được nét đẹp truyền thống của gỗ tự nhiên. Những ngôi nhà này thường có không gian rộng rãi, thoáng đãng và gần gũi với thiên nhiên.')">
+                <img src="img/image2.jpg" alt="Nhà gỗ 2"
+                    onclick="openPopup('img/image2.jpg', 'Nhà Gỗ Truyền Thống','Nhà gỗ truyền thống mang đến một vẻ đẹp lịch sửđặc biệt trong không gian sống. Với sự kết hợp giữa nét cổ điển và sự tiện nghi, những ngôi nhà gỗ truyền thống tạo ra một môi trường sống độc đáo và ấm cúng. Trong các dự án Nhà gỗ Tín Phát cũng thiết kế và thi công các công trình nhà gỗ truyền thống như nhà thờ họ, nhà gỗ cổ điển mang đậm dấu ấn văn hóa dân tộc.')">
             </div>
             <div class="image-center">
-                <img src="img/image3.jpg" alt="Nhà gỗ 3">
+                <img src="img/image3.jpg" alt="Nhà gỗ 3"
+                    onclick="openPopup('img/image3.jpg', 'Nhà Gỗ Hiện Đại', 'Nếu như nhà gỗ kiểu truyền thống mang lại những nét đẹp cổ truyền với sự ấm cũng, gần gũi nhưng cũng không kém phần sang tọng thì thiết kế nhà gỗ theo hướng hiện đại lại giúp bạn có được không gian nhà ở tiện nghi thoải mái hơn, toát lên được vẻ đẹp hiện đại, sang trọng và đẳng cấp. Với xu hướng thiết kế nhà gỗ kết hợp với các vật liệu hiện đại như kính, thép, Nhà Gỗ Tín Phát cũng cung cấp các công trình nhà gỗ hiện đại với không gian mở, tối ưu hóa ánh sáng tự nhiên.')">
             </div>
         </div>
     </div>
 
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <div class="popup-images">
+                <img id="popup-image1" src="" alt="">
+                <img id="popup-image2" src="" alt="">
+                <img id="popup-image3" src="" alt="">
+            </div>
+            <div class="popup-text">
+                <h2 id="popup-title"></h2>
+                <p id="popup-description"></p>
+            </div>
+            <button class="close-btn" onclick="closePopup()">&times;</button>
+        </div>
+    </div>
+
+    <script>
+        function openPopup(imageSrc, title, description) {
+            document.getElementById("popup-image1").src = imageSrc;
+            document.getElementById("popup-image2").src = imageSrc;
+            document.getElementById("popup-image3").src = imageSrc;
+            document.getElementById("popup-title").innerText = title;
+            document.getElementById("popup-description").innerText = description;
+            document.getElementById("popup").style.display = "flex";
+        }
+
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+        }
+    </script>
     <div class="products">
-        <h2>DỰ ÁN</h2>
+        <p style="text-decoration: underline; font-weight: bold;">DỰ ÁN</p>
         <p class="list">
             Mỗi sản phẩm của chúng tôi mang đến với khách hàng đều là sự tỉ mỉ trong từng họa tiết, hoa văn được những
             nghệ nhân làng nghề Chàng Sơn điêu khắc thủ công.</p>
         <div class="product-images">
             <div class="image-row">
-                <img src="img/image1.jpg" alt="Nhà gỗ 1">
-                <img src="img/image2.jpg" alt="Nhà gỗ 2">
+                <img src="img/nha2.jpg" alt="Nhà gỗ 1">
+                <img src="img/nha3.jpg" alt="Nhà gỗ 2">
             </div>
             <div class="image-center">
-                <img src="img/image3.jpg" alt="Nhà gỗ 3">
+                <img src="img/nha4.jpg" alt="Nhà gỗ 3">
             </div>
         </div>
 
         <div class="video-section">
-            <h2>VIDEO SẢN PHẨM</h2>
+            <p style="text-decoration: underline; font-weight: bold;">VIDEO SẢN PHẨM</p>
             <div class="video-container">
                 <div class="video-left">
                     <iframe src="https://www.youtube.com/embed/oSL2fJSYsOw" allowfullscreen></iframe>
                 </div>
-                <div class="video-right-top">
-                    <iframe src="https://www.youtube.com/embed/4agkH2d3EdQ" allowfullscreen></iframe>
+                <div class="video-middle">
+                    <iframe src="https://www.youtube.com/embed/oSL2fJSYsOw" allowfullscreen></iframe>
+                </div>
+                <div class="video-right">
+                    <iframe src="https://www.youtube.com/embed/oSL2fJSYsOw" allowfullscreen></iframe>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- <div class="form-container" style="">
-            <h2>ĐĂNG KÝ MUA HÀNG</h2>
-            <form>
-                <input type="text" placeholder="Họ và tên" required>
-                <input type="text" placeholder="Địa chỉ" required>
-                <input type="tel" placeholder="Số điện thoại" required>
-                <input type="email" placeholder="Email" required>
-                <textarea placeholder="Nội dung" rows="4"></textarea>
-                <button type="submit">GỬI LIÊN HỆ</button>
-            </form>
-        </div> -->
-
-        <div class="form-container">
-            <h2>ĐĂNG KÝ MUA HÀNG</h2>
+    <div style="align-items: center; height: 100%; /* Đảm bảo body và html có chiều cao đầy đủ */
+        margin: 0; /* Loại bỏ margin mặc định */
+        display: flex; /* Dùng flexbox để căn giữa */
+        justify-content: center; /* Căn giữa theo chiều ngang */
+        align-items: center; /* Căn giữa theo chiều dọc */
+        ">
+        <div id="contact" class="form-container">
+            <p style="color: #0d47a1; font-weight: bold; font-size: 24px">ĐĂNG KÝ MUA HÀNG</p>
             <form id="contact-form">
                 <input type="text" id="name" placeholder="Họ và tên" required>
                 <input type="text" id="address" placeholder="Địa chỉ" required>
                 <input type="tel" id="phone" placeholder="Số điện thoại" required>
                 <input type="email" id="email" placeholder="Email" required>
-                <textarea id="message" placeholder="Nội dung" rows="4"></textarea>
+                <textarea id="message" placeholder="Nội dung" rows="4" required></textarea>
                 <button type="submit">GỬI LIÊN HỆ</button>
             </form>
         </div>
-        
-        <script>
-            // document.getElementById("contact-form").addEventListener("submit", function(event) {
-            //     event.preventDefault();
-                
-            //     const formData = {
-            //         name: document.getElementById("name").value,
-            //         address: document.getElementById("address").value,
-            //         phone: document.getElementById("phone").value,
-            //         email: document.getElementById("email").value,
-            //         message: document.getElementById("message").value
-            //     };
-                
-            //     fetch("https://script.google.com/macros/s/AKfycbxHxrmaZlQl1NQcQAmabwTWSq76t2EezdeozlFMqxUMb8qiZ1q7K4aVT8tWnNRWggdnPw/exec", {
-            //         method: "POST",
-            //         body: JSON.stringify(formData),
-            //         headers: { "Content-Type": "application/json" }
-            //     })
-            //     .then(response => response.text())
-            //     .then(data => {
-            //         alert("Đã gửi thành công!");
-            //         document.getElementById("contact-form").reset();
-            //     })
-            //     .catch(error => alert("Lỗi: " + error));
+    </div>
 
 
+    <script>
 
-                document.getElementById("contact-form").addEventListener("submit", function(event) {
-                    event.preventDefault();
-                    
-                    const formData = {
-                        name: document.getElementById("name").value,
-                        address: document.getElementById("address").value,
-                        phone: document.getElementById("phone").value,
-                        email: document.getElementById("email").value,
-                        message: document.getElementById("message").value
-                    };
+        document.getElementById("contact-form").addEventListener("submit", function (event) {
+            event.preventDefault();
 
-                    fetch("https://script.google.com/macros/s/AKfycbyDMvqACCwcetuCIaMMRrMECcgsWblHcUCPCjcd4_3-lJMohx-M6M5rp_DZKoAreXuaCw/exec", {
-                        method: "POST",
-                        body: JSON.stringify(formData),  // Gửi dữ liệu dạng plain text
-                        headers: { "Content-Type": "text/plain" }  // Đổi từ JSON sang text/plain
-                    })
-                    .then(response => response.text())  // Đọc response dưới dạng text
-                    .then(data => {
-                        console.log("Server response:", data);
-                        alert("Đã gửi thành công!");
-                        document.getElementById("contact-form").reset();
-                    })
-                    .catch(error => console.error("Lỗi:", error));
-                });
-            // });
-        </script>
+            const formData = {
+                name: document.getElementById("name").value,
+                address: document.getElementById("address").value,
+                phone: document.getElementById("phone").value,
+                email: document.getElementById("email").value,
+                message: document.getElementById("message").value
+            };
 
-        <div class="video-section">
-            <div class="video-container">
-                <div class="contact-info">
-                    <p>📍 Thôn Yên Lạc 1, Xã Cần Kiệm, Huyện Thạch Thất, TP Hà Nội</p>
-                    <p>📞 Hotline: 0989603222</p>
-                    <p>📧 Email: nhagotinphat@gmail.com</p>
-                    <p>🕒 Thứ 2 - Chủ Nhật: 8AM đến 5PM</p>
-                </div>
-                <div class="map-container">
-                    <iframe src="https://www.google.com/maps/embed?your_map_link" allowfullscreen></iframe>
-                </div>
+            fetch("https://script.google.com/macros/s/AKfycbyDMvqACCwcetuCIaMMRrMECcgsWblHcUCPCjcd4_3-lJMohx-M6M5rp_DZKoAreXuaCw/exec", {
+                method: "POST",
+                body: JSON.stringify(formData),  // Gửi dữ liệu dạng plain text
+                headers: { "Content-Type": "text/plain" }  // Đổi từ JSON sang text/plain
+            })
+                .then(response => response.text())  // Đọc response dưới dạng text
+                .then(data => {
+                    console.log("Server response:", data);
+                    alert("Đã gửi thành công!");
+                    document.getElementById("contact-form").reset();
+                })
+                .catch(error => console.error("Lỗi:", error));
+        });
+    </script>
+
+    <div class="video-section">
+        <div class="video-container">
+            <div class="contact-info">
+                <p>📍 Thôn Yên Lạc 1, Xã Cần Kiệm, Huyện Thạch Thất, TP Hà Nội</p>
+                <p>📞 Hotline: 0989603222</p>
+                <p>📧 Email: nhagotinphat@gmail.com</p>
+                <p>🕒 Thứ 2 - Chủ Nhật: 8AM đến 5PM</p>
+            </div>
+            <div class="map-container">
+                <img src="img/map.png" alt="">
             </div>
         </div>
+    </div>
 </body>
+
 </html>

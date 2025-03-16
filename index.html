@@ -1,35 +1,473 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    <title>Document</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-    <header>
-		<nav class="navbar navbar-expand-lg">
-			<div class="container-fluid">
-				<div class="collapse navbar-collapse" id="navbarNav">
-					<ul class="navbar-nav ml-auto">
-                        <li class="nav-item">
-							<a class="nav-link" href="index.html">Home</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="login.html">Login</a>
-						</li>
-						<!-- <li class="nav-item">
-							<a class="nav-link" href="">Register</a>
-						</li> -->
-					</ul>
-				</div>
-			</div>
-		</nav>
-	</header>
+    <title>Nhà Gỗ Tín Phát</title>
+    <style>
+        body {
+            background-color: #0d47a1;
+            margin: 0;
+            padding: 0;
+            color: white;
+            font-family: "Work Sans", sans-serif;
+        }
 
-    <div>
-        <h1>Giới thiệu</h1>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(to bottom, #002c8b, white);
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .nav {
+            display: flex;
+            height: 50px;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: black;
+        }
+
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo img {
+            width: 150px;
+        }
+
+        .banner {
+            position: relative;
+            text-align: center;
+            color: white;
+        }
+
+        .banner img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            filter: brightness(70%) blur(3px);
+            /* Làm tối và mờ ảnh */
+        }
+
+
+        .banner-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 90%;
+        }
+
+        .banner-text h1 {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .banner-text h2 {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .title {
+            font-size: 50px;
+            font-family: "Open Sans", sans-serif;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            font-family: "Open Sans", sans-serif;
+            font-weight: bold;
+        }
+
+        .media-text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 40px;
+        }
+
+        .media-text img {
+            width: 40%;
+            border-radius: 10px;
+        }
+
+        .content {
+            background-color: rgb(3, 56, 135);
+            border-radius: 19px;
+            padding: 20px;
+            width: 50%;
+            color: white;
+        }
+
+        .content h2 {
+            font-size: 24px;
+            font-family: "Fraunces", serif;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: underline;
+        }
+
+        .content p {
+            font-size: 18px;
+        }
+
+        .why-choose-us {
+            width: 60%;
+            margin: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .why-choose-us h2,
+        .products h2 {
+            border-bottom: 2px solid white;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .products {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .products h2 {
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .products p {
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .product-images {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .image-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .image-row img,
+        .image-center img {
+            width: 300px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .video-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 40px 0;
+            color: white;
+        }
+
+        .video-section h2 {
+            text-transform: uppercase;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .video-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .video-left,
+        .video-right-top,
+        .video-right-center,
+        .map-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .video-left iframe,
+        .video-right-top iframe,
+        .video-right-center iframe {
+            width: 320px;
+            height: 180px;
+            border-radius: 10px;
+            border: 2px solid white;
+        }
+
+        .video-right-center {
+            background: #ccc;
+            width: 320px;
+            height: 180px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            border: 2px solid white;
+        }
+
+        .contact-info {
+            text-align: left;
+            color: white;
+            margin-top: 30px;
+        }
+
+        .contact-icons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .contact-icons a {
+            color: white;
+            font-size: 24px;
+        }
+
+        .map-container iframe {
+            width: 400px;
+            height: 250px;
+            border-radius: 10px;
+            border: 2px solid white;
+        }
+
+        .form-container {
+            width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-container h2 {
+            color: #0d47a1;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .form-container input,
+        .form-container textarea {
+            width: 90%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 2px solid #0d6efd;
+            border-radius: 5px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .form-container input[readonly] {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .form-container button {
+            width: 100%;
+            background: #0d47a1;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .form-container button:hover {
+            background: #0b3c91;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <nav class="nav">
+            <a href="#">TRANG CHỦ</a>
+            <a href="#">GIỚI THIỆU</a>
+            <div class="logo">
+                <img src="img/logo.png" alt="Nhà Gỗ Tín Phát">
+            </div>
+            <a href="#">SẢN PHẨM</a>
+            <a href="#">LIÊN HỆ</a>
+        </nav>
     </div>
+    <div class="banner">
+        <img src="img/nha1.jpg" alt="Nhà Gỗ">
+        <div class="banner-text">
+            <h1 style="font-size: 3em; margin-top: 100px;">NHÀ GỖ TÍN PHÁT</h1>
+            <h4 style="margin-top: 40px;">GIÁ TRỊ ĐÍCH THỰC CỦA CÁI ĐẸP</h4>
+            <h4 style="margin-top: 3px;">NGHỆ THUẬT VÀ CHẤT LƯỢNG GÓP PHẦN TẠO NÊN KHÔNG GIAN LÝ TƯỞNG</h4>
+        </div>
+    </div>
+
+
+    <div class="media-text">
+        <img src="https://sell108.wordpress.com/wp-content/uploads/2025/03/7-3.jpg?w=1024" alt="">
+        <div class="content">
+            <h2>VỀ CHÚNG TÔI</h2>
+            <p>
+                Công ty Nhà gỗ Tín Phát khẳng định vị thế và tầm nhìn thông qua các thiết kế công trình nổi bật, dẫn đầu
+                xu hướng trong ngành nhà gỗ tại Việt Nam. Với mục tiêu mang đến những công trình nhà gỗ đẹp mắt, chất
+                lượng cao, kết hợp giữa nét đẹp truyền thống và công nghệ hiện đại, Nhà gỗ Tín Phát luôn chú trọng đến
+                việc lựa chọn chất liệu gỗ cao cấp, các phương pháp thi công tỉ mỉ và dịch vụ khách hàng chu đáo. Để làm
+                được tất cả mục tiêu ấy trước tiên chúng tôi phải đặt trách nhiệm lên hàng đầu với việc tận tâm trong
+                từng công việc.
+            </p>
+        </div>
+    </div>
+
+    <div class="why-choose-us">
+        <h2 style="margin-left: 70px;">VÌ SAO NÊN CHỌN CHÚNG TÔI</h2>
+        <ul class="list">
+            <p><b>1.</b> Chất lượng sản phẩm: Xưởng luôn sử dụng các loại gỗ tự nhiên chất lượng cao và áp dụng quy
+                trình sản xuất hiện đại, đảm bảo sản phẩm có độ bền cao và tính thẩm mỹ vượt trội.</p>
+            <p><b>2.</b> Thiết kế độc đáo: Mỗi công trình của Tín Phát đều được thiết kế riêng biệt, phù hợp với nhu cầu
+                và phong cách của khách hàng. Các thiết kế mang tính sáng tạo, kết hợp giữa yếu tố truyền thống và hiện
+                đại.</p>
+            <p><b>3.</b> Dịch vụ chuyên nghiệp: Nhà Gỗ Tín Phát luôn chú trọng đến việc phục vụ khách hàng với dịch vụ
+                chuyên nghiệp và tận tâm, từ khâu tư vấn thiết kế đến thi công và bảo trì sau khi hoàn thiện.</p>
+            <p><b>4.</b> Giá cả hợp lý: Tín Phát cam kết cung cấp sản phẩm và dịch vụ chất lượng với mức giá hợp lý,
+                giúp khách hàng có thể sở hữu một ngôi nhà gỗ đẹp và bền vững mà không lo về chi phí.</p>
+        </ul>
+    </div>
+
+    <div class="products">
+        <h2>SẢN PHẨM</h2>
+        <p>Nhà Gỗ Tín Phát đã hoàn thành nhiều công trình nhà gỗ đẹp mắt và chất lượng tại Thạch Thất và các khu vực
+            xung quanh. Mỗi sản phẩm của chúng tôi mang đến khách hàng đều là sự tỉ mỉ trong từng họa tiết, hoa văn được
+            những nghệ nhân làng nghề Chàng Sơn điêu khắc thủ công. Một số công trình nổi bật bao gồm:
+        </p>
+        <div class="product-images">
+            <div class="image-row">
+                <img style="margin-right: 100px" src="img/image1.jpg" alt="Nhà gỗ 1">
+                <img src="img/image2.jpg" alt="Nhà gỗ 2">
+            </div>
+            <div class="image-center">
+                <img src="img/image3.jpg" alt="Nhà gỗ 3">
+            </div>
+        </div>
+    </div>
+
+    <div class="products">
+        <h2>DỰ ÁN</h2>
+        <p class="list">
+            Mỗi sản phẩm của chúng tôi mang đến với khách hàng đều là sự tỉ mỉ trong từng họa tiết, hoa văn được những
+            nghệ nhân làng nghề Chàng Sơn điêu khắc thủ công.</p>
+        <div class="product-images">
+            <div class="image-row">
+                <img src="img/image1.jpg" alt="Nhà gỗ 1">
+                <img src="img/image2.jpg" alt="Nhà gỗ 2">
+            </div>
+            <div class="image-center">
+                <img src="img/image3.jpg" alt="Nhà gỗ 3">
+            </div>
+        </div>
+
+        <div class="video-section">
+            <h2>VIDEO SẢN PHẨM</h2>
+            <div class="video-container">
+                <div class="video-left">
+                    <iframe src="https://www.youtube.com/embed/oSL2fJSYsOw" allowfullscreen></iframe>
+                </div>
+                <div class="video-right-top">
+                    <iframe src="https://www.youtube.com/embed/4agkH2d3EdQ" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="form-container" style="">
+            <h2>ĐĂNG KÝ MUA HÀNG</h2>
+            <form>
+                <input type="text" placeholder="Họ và tên" required>
+                <input type="text" placeholder="Địa chỉ" required>
+                <input type="tel" placeholder="Số điện thoại" required>
+                <input type="email" placeholder="Email" required>
+                <textarea placeholder="Nội dung" rows="4"></textarea>
+                <button type="submit">GỬI LIÊN HỆ</button>
+            </form>
+        </div> -->
+
+        <div class="form-container">
+            <h2>ĐĂNG KÝ MUA HÀNG</h2>
+            <form id="contact-form">
+                <input type="text" id="name" placeholder="Họ và tên" required>
+                <input type="text" id="address" placeholder="Địa chỉ" required>
+                <input type="tel" id="phone" placeholder="Số điện thoại" required>
+                <input type="email" id="email" placeholder="Email" required>
+                <textarea id="message" placeholder="Nội dung" rows="4"></textarea>
+                <button type="submit">GỬI LIÊN HỆ</button>
+            </form>
+        </div>
+        
+        <script>
+            document.getElementById("contact-form").addEventListener("submit", function(event) {
+                event.preventDefault();
+                
+                const formData = {
+                    name: document.getElementById("name").value,
+                    address: document.getElementById("address").value,
+                    phone: document.getElementById("phone").value,
+                    email: document.getElementById("email").value,
+                    message: document.getElementById("message").value
+                };
+                
+                fetch("https://script.google.com/macros/s/AKfycbyC_6-TeVITgZGQz-QtKOF6jCi090cLM5gL6xzOiDiCauCusuXdzRV-Uq2QYqorRKXAiw/exec", {
+                    method: "POST",
+                    body: JSON.stringify(formData),
+                    headers: { "Content-Type": "application/json" }
+                })
+                .then(response => response.text())
+                .then(data => {
+                    alert("Đã gửi thành công!");
+                    document.getElementById("contact-form").reset();
+                })
+                .catch(error => alert("Lỗi: " + error));
+            });
+        </script>
+
+        <div class="video-section">
+            <div class="video-container">
+                <div class="contact-info">
+                    <p>📍 Thôn Yên Lạc 1, Xã Cần Kiệm, Huyện Thạch Thất, TP Hà Nội</p>
+                    <p>📞 Hotline: 0989603222</p>
+                    <p>📧 Email: nhagotinphat@gmail.com</p>
+                    <p>🕒 Thứ 2 - Chủ Nhật: 8AM đến 5PM</p>
+                </div>
+                <div class="map-container">
+                    <iframe src="https://www.google.com/maps/embed?your_map_link" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
 </body>
 </html>

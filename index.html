@@ -240,6 +240,7 @@
             text-align: left;
             color: white;
             margin-top: 30px;
+            font-size: 18px;
         }
 
         .contact-icons {
@@ -254,8 +255,8 @@
         }
 
         .map-container iframe {
-            width: 400px;
-            height: 250px;
+            width: 1000;
+            height: 600px;
             border-radius: 10px;
             border: 2px solid white;
         }
@@ -286,7 +287,7 @@
             border: 2px solid #0d6efd;
             border-radius: 5px;
             font-size: 16px;
-            font-weight: bold;
+            /* font-weight: bold; */
             outline: none;
         }
 
@@ -354,7 +355,7 @@
         }
 
         .popup-images img:nth-child(3) {
-            margin-left:
+            margin-left: 40px;
         }
 
         .popup-text {
@@ -372,6 +373,66 @@
             color: white;
             font-size: 20px;
             cursor: pointer;
+        }
+
+        .slider-container {
+            width: 400px; /* Kích thước của slider */
+            overflow: hidden; /* Ẩn phần ảnh không nằm trong vùng hiển thị */
+            position: relative;
+            margin: 50px auto; /* Căn giữa slider */
+        }
+        .slider {
+            display: flex; /* Sử dụng flexbox để các ảnh nằm ngang */
+            transition: transform 0.5s ease-in-out; /* Hiệu ứng chuyển động khi trượt */
+        }
+        .slider img {
+            width: 400px; /* Kích thước của ảnh */
+            height: 300px; /* Chiều cao của ảnh */
+            object-fit: cover; /* Đảm bảo ảnh luôn đầy đủ diện tích của khung */
+        }
+        .slider-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            z-index: 10;
+        }
+        .prev {
+            left: 10px; /* Nút trái nằm ngoài ảnh */
+        }
+        .next {
+            right: 10px; /* Nút phải nằm ngoài ảnh */
+        }
+
+
+
+        .loading {
+            display: none;
+            margin-top: 10px;
+            margin-left: 10px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+        }
+
+        /* CSS cho hiệu ứng quay của spinner */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* CSS cho nút đã bị vô hiệu hóa */
+        .disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -439,7 +500,7 @@
                 <img style="margin-right: 100px" src="img/image1.jpg" alt="Nhà gỗ 1"
                     onclick="openPopup('img/image1.jpg', 'Nhà Gỗ Biệt Thự', 'Một trong những phong cách biệt thự gỗ phổ biến nhất hiện nay đó chính là thiết kế nhà gỗ biệt thự. Giống với biệt thự hiện đại thì nhà gỗ biệt thự cần phải có cách bài trí mặt bằng không gian 1 cách linh hoạt, nhưng vẫn đảm bảo sự tiện nghi và độc đáo. Các công trình biệt thự gỗ của Tín Phát luôn có thiết kế sang trọng, hiện đại nhưng vẫn giữ được nét đẹp truyền thống của gỗ tự nhiên. Những ngôi nhà này thường có không gian rộng rãi, thoáng đãng và gần gũi với thiên nhiên.')">
                 <img src="img/image2.jpg" alt="Nhà gỗ 2"
-                    onclick="openPopup('img/image2.jpg', 'Nhà Gỗ Truyền Thống','Nhà gỗ truyền thống mang đến một vẻ đẹp lịch sửđặc biệt trong không gian sống. Với sự kết hợp giữa nét cổ điển và sự tiện nghi, những ngôi nhà gỗ truyền thống tạo ra một môi trường sống độc đáo và ấm cúng. Trong các dự án Nhà gỗ Tín Phát cũng thiết kế và thi công các công trình nhà gỗ truyền thống như nhà thờ họ, nhà gỗ cổ điển mang đậm dấu ấn văn hóa dân tộc.')">
+                    onclick="openPopup('img/image2.jpg', 'Nhà Gỗ Truyền Thống','Nhà gỗ truyền thống mang đến một vẻ đẹp lịch sử đặc biệt trong không gian sống. Với sự kết hợp giữa nét cổ điển và sự tiện nghi, những ngôi nhà gỗ truyền thống tạo ra một môi trường sống độc đáo và ấm cúng. Trong các dự án Nhà gỗ Tín Phát cũng thiết kế và thi công các công trình nhà gỗ truyền thống như nhà thờ họ, nhà gỗ cổ điển mang đậm dấu ấn văn hóa dân tộc.')">
             </div>
             <div class="image-center">
                 <img src="img/image3.jpg" alt="Nhà gỗ 3"
@@ -469,6 +530,8 @@
             document.getElementById("popup-image2").src = imageSrc;
             document.getElementById("popup-image3").src = imageSrc;
             document.getElementById("popup-title").innerText = title;
+            document.getElementById("popup-description").style.fontSize = "18px";
+
             document.getElementById("popup-description").innerText = description;
             document.getElementById("popup").style.display = "flex";
         }
@@ -482,27 +545,53 @@
         <p class="list">
             Mỗi sản phẩm của chúng tôi mang đến với khách hàng đều là sự tỉ mỉ trong từng họa tiết, hoa văn được những
             nghệ nhân làng nghề Chàng Sơn điêu khắc thủ công.</p>
-        <div class="product-images">
-            <div class="image-row">
-                <img src="img/nha2.jpg" alt="Nhà gỗ 1">
-                <img src="img/nha3.jpg" alt="Nhà gỗ 2">
+        <div class="slider-container">
+            <div class="slider">
+                <img src="img/nha2.jpg" alt="Image 1">
+                <img src="img/nha3.jpg" alt="Image 2">
+                <img src="img/nha6.jpg" alt="Image 3">
             </div>
-            <div class="image-center">
-                <img src="img/nha4.jpg" alt="Nhà gỗ 3">
-            </div>
+            <button class="slider-button prev">&#10094;</button>
+            <button class="slider-button next">&#10095;</button>
         </div>
+
+        <script>
+            const slider = document.querySelector('.slider');
+            const prevButton = document.querySelector('.prev');
+            const nextButton = document.querySelector('.next');
+            let currentIndex = 0; // Chỉ số ảnh hiện tại
+    
+            function moveSlider() {
+                const width = 400; // Chiều rộng của mỗi ảnh
+                slider.style.transform = `translateX(${-currentIndex * width}px)`; // Di chuyển slider
+            }
+    
+            nextButton.addEventListener('click', () => {
+                if (currentIndex < 2) { // Nếu không phải ảnh cuối cùng
+                    currentIndex++;
+                    moveSlider();
+                }
+            });
+    
+            prevButton.addEventListener('click', () => {
+                if (currentIndex > 0) { // Nếu không phải ảnh đầu tiên
+                    currentIndex--;
+                    moveSlider();
+                }
+            });
+        </script>
 
         <div class="video-section">
             <p style="text-decoration: underline; font-weight: bold;">VIDEO SẢN PHẨM</p>
             <div class="video-container">
                 <div class="video-left">
-                    <iframe src="https://www.youtube.com/embed/oSL2fJSYsOw" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/4agkH2d3EdQ" allowfullscreen></iframe>
                 </div>
                 <div class="video-middle">
                     <iframe src="https://www.youtube.com/embed/oSL2fJSYsOw" allowfullscreen></iframe>
                 </div>
                 <div class="video-right">
-                    <iframe src="https://www.youtube.com/embed/oSL2fJSYsOw" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/FuBg1I7d0X0" allowfullscreen></iframe>
                 </div>
             </div>
         </div>
@@ -522,13 +611,15 @@
                 <input type="tel" id="phone" placeholder="Số điện thoại" required>
                 <input type="email" id="email" placeholder="Email" required>
                 <textarea id="message" placeholder="Nội dung" rows="4" required></textarea>
-                <button type="submit">GỬI LIÊN HỆ</button>
+                <button type="submit" id="submit-btn">GỬI LIÊN HỆ</button>
+                <div id="loading" class="loading"></div>
+
             </form>
         </div>
     </div>
 
 
-    <script>
+    <!-- <script>
 
         document.getElementById("contact-form").addEventListener("submit", function (event) {
             event.preventDefault();
@@ -554,8 +645,50 @@
                 })
                 .catch(error => console.error("Lỗi:", error));
         });
-    </script>
+    </script> -->
+    <script>
+        document.getElementById("contact-form").addEventListener("submit", function (event) {
+            event.preventDefault();
 
+            // Vô hiệu hóa nút và form khi gửi
+            const submitButton = document.getElementById("submit-btn");
+            const loadingSpinner = document.getElementById("loading");
+            submitButton.disabled = true;
+            submitButton.classList.add("disabled");
+            loadingSpinner.style.display = "inline-block"; // Hiển thị spinner
+
+            // Lấy dữ liệu từ form
+            const formData = {
+                name: document.getElementById("name").value,
+                address: document.getElementById("address").value,
+                phone: document.getElementById("phone").value,
+                email: document.getElementById("email").value,
+                message: document.getElementById("message").value
+            };
+
+            fetch("https://script.google.com/macros/s/AKfycbyDMvqACCwcetuCIaMMRrMECcgsWblHcUCPCjcd4_3-lJMohx-M6M5rp_DZKoAreXuaCw/exec", {
+                method: "POST",
+                body: JSON.stringify(formData),  // Gửi dữ liệu dạng plain text
+                headers: { "Content-Type": "text/plain" }  // Đổi từ JSON sang text/plain
+            })
+                .then(response => response.text())  // Đọc response dưới dạng text
+                .then(data => {
+                    console.log("Server response:", data);
+                    alert("Đã gửi thành công!");
+                    document.getElementById("contact-form").reset();
+                })
+                .catch(error => {
+                    console.error("Lỗi:", error);
+                    alert("Có lỗi xảy ra. Vui lòng thử lại.");
+                })
+                .finally(() => {
+                    // Sau khi gửi thành công hoặc thất bại, phục hồi trạng thái form
+                    submitButton.disabled = false;
+                    submitButton.classList.remove("disabled");
+                    loadingSpinner.style.display = "none"; // Ẩn spinner
+                });
+        });
+    </script>
     <div class="video-section">
         <div class="video-container">
             <div class="contact-info">
@@ -565,7 +698,8 @@
                 <p>🕒 Thứ 2 - Chủ Nhật: 8AM đến 5PM</p>
             </div>
             <div class="map-container">
-                <img src="img/map.png" alt="">
+                <!-- <img src="img/map.png" alt=""> -->
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d658.3479437444948!2d105.58253857217152!3d21.025548091253416!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31345a04b5a4fb9b%3A0x5d0778f14deaea39!2zMkhHTSs2NDgsIFRow7RuIFnDqm4sIFRo4bqhY2ggVGjhuqV0LCBIw6AgTuG7mWksIFZp4buHdCBOYW0!5e0!3m2!1svi!2s!4v1742155446929!5m2!1svi!2s" width="1000" height="600" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
     </div>

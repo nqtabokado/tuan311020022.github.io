@@ -25,58 +25,13 @@
 
     <header>
         <h2>Sandbox</h2>
-        <div class="github-link"><a href="https://github.com/jerosoler/Drawflow" target="_blank"><i
+        <!-- <div class="github-link"><a href="https://github.com/jerosoler/Drawflow" target="_blank"><i
                     class="fab fa-github fa-3x"></i></a></div>
         <div class="them-edit-link"><a href="https://jerosoler.github.io/drawflow-theme-generator/"
-                target="_blank">🎨</a></div>
+                target="_blank">🎨</a></div> -->
     </header>
     <div class="wrapper">
         <div class="col">
-            <!-- Task -->
-            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="task1">
-              <i class="far fa-chart-bar"></i><span> Task #1</span>
-            </div>
-            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="task2">
-              <i class="far fa-chart-bar"></i><span> Task #2</span>
-            </div>
-            <!-- CLI -->
-            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="statusMonitor">
-              <i class="far fa-file-code"></i><span> 状態モニタ</span>
-            </div>
-            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="actionCommand">
-              <i class="far fa-file-code"></i><span> 動作コマンド</span>
-            </div>
-            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="envSettingCommand">
-              <i class="far fa-file-code"></i><span> 環境設定コマンド</span>
-            </div>
-            <!-- Command -->
-            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="showCommand">
-              <i class="fas fa-terminal"></i><span> show <br>(単発表示)</br></span>
-            </div>
-            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="showcCommand">
-              <i class="fas fa-terminal"></i><span> showc <br>連続的に表示 (100-200ms周期)</br></span>
-            </div>
-            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="doCommand">
-              <i class="fas fa-terminal"></i><span> do</span>
-            </div>
-            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="setCommand">
-              <i class="fas fa-terminal"></i><span> set</span>
-            </div>
-            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="envCommand">
-              <i class="fas fa-terminal"></i><span> env</span>
-            </div>
-            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="q2eCommand">
-              <i class="fas fa-terminal"></i><span> q2e</span>
-            </div>
-            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="e2qCommand">
-              <i class="fas fa-terminal"></i><span> e2q</span>
-            </div>
-            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="eresetCommand">
-              <i class="fas fa-terminal"></i><span> ereset</span>
-            </div>
-            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="elogCommand">
-              <i class="fas fa-terminal"></i><span> elog</span>
-            </div>
             <!-- How to use -->
             <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="showJoints">
               <i class="fas fa-play"></i><span> show joints <br>各軸値を表示する</br></span>
@@ -108,20 +63,26 @@
             <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="showcTspeed">
               <i class="fas fa-play"></i><span> showc tspeed <br>ベース座標系での手先速度を表示する</br></span>
             </div>
+            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="addSubtract">
+              <i class="fas fa-play"></i><span> add/substract </span>
+            </div>
+            <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="multipleDivine">
+              <i class="fas fa-play"></i><span> multiple/divine</span>
+            </div>
             <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="doJmove">
-              <i class="fas fa-play"></i><span>do jmove <br>各軸補完で目標位置に動作</br></span>
+              <i class="fas fa-play"></i><span> do jmove <br>各軸補完で目標位置に動作</br></span>
             </div>
             <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="doImove">
-              <i class="fas fa-play"></i><span>do imove <br>直線補完で目標位置に動作</br></span>
+              <i class="fas fa-play"></i><span> do imove <br>直線補完で目標位置に動作</br></span>
             </div>
             <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="doTmove">
-              <i class="fas fa-play"></i><span>do tmove <br>各軸の目標トルクを制御する</br></span>
+              <i class="fas fa-play"></i><span> do tmove <br>各軸の目標トルクを制御する</br></span>
             </div>
             <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="doFmove">
-              <i class="fas fa-play"></i><span>do fmove <br>直交座標系で力を制御する</br></span>
+              <i class="fas fa-play"></i><span> do fmove <br>直交座標系で力を制御する</br></span>
             </div>
             <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="doHome">
-              <i class="fas fa-play"></i><span>do home <br>ホーム位置に移動</br></span>
+              <i class="fas fa-play"></i><span> do home <br>ホーム位置に移動</br></span>
             </div>
             <div class="drag-drawflow" draggable="true" ondragstart="drag(event)" data-node="setSysbase">
               <i class="fas fa-play"></i><span> set sysbase <br>ワールド座標系に対する、システムベース座標位置・姿勢を定義する</br></span>
@@ -153,17 +114,19 @@
         </div>
         <div class="col-right">
             <div class="menu">
-                <ul>
-                    <li onclick="editor.changeModule('Home'); changeModule(event);" class="selected">Task #1</li>
-                    <li onclick="editor.changeModule('Other'); changeModule(event);">Task #2</li>
+                <ul id="module-list">
+                    <li onclick="editor.changeModule('Home'); changeModule('Task #1', event);" class="selected">Task #1</li>
+                    <li onclick="editor.changeModule('Other'); changeModule('Task #2', event);">Task #2</li>
                 </ul>
             </div>
             <div id="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)">
-
+                <div class="btn-start" onclick="runTaskSequence(this)">Start</div>
                 <div class="btn-export" onclick="Swal.fire({ title: 'Export',
         html: '<pre><code>'+JSON.stringify(editor.export(), null,4)+'</code></pre>'
         })">Export</div>
+                <div class="btn-import" onclick="">Import</div>
                 <div class="btn-clear" onclick="clearTask()">Clear</div>
+                <div class="btn-add-module" onclick="addNewModule()">Add Module</div>
                 <div class="btn-lock">
                     <i id="lock" class="fas fa-lock" onclick="editor.editor_mode='fixed'; changeMode('lock');"></i>
                     <i id="unlock" class="fas fa-lock-open" onclick="editor.editor_mode='edit'; changeMode('unlock');"
@@ -179,52 +142,19 @@
     </div>
 
     <script>
+        let defaultTask = "Task #1";
+        let idTask = 22; // Default task ID
+
         var id = document.getElementById("drawflow");
         const editor = new Drawflow(id);
         editor.reroute = true;
-        const dataToImport = {"drawflow":{"Home":{"data":{"22":{"id":22,"name":"task1","data":{},"class":"task1","html":"<div class='title-box'><i class='far fa-chart-bar'></i> Task #1</div>","typenode":false,"inputs":{"input_1":{"connections":[]}},"outputs":{"output_1":{"connections":[]}},"pos_x":100,"pos_y":52}}},"Other":{"data":{"23":{"id":23,"name":"task2","data":{},"class":"task2","html":"<div class='title-box'><i class='far fa-chart-bar'></i> Task #2</div>","typenode":false,"inputs":{"input_1":{"connections":[]}},"outputs":{"output_1":{"connections":[]}},"pos_x":100,"pos_y":52}}}}}
+        const dataToImport = {"drawflow":{"Home":{"data":{"22":{"id":22,"name":"task1","data":{},"class":"task1","html":"<div class='title-box'><i class='far fa-chart-bar'></i> Task #1</div>","typenode":false,"inputs":{},"outputs":{"output_1":{"connections":[]}},"pos_x":100,"pos_y":52}}},"Other":{"data":{"23":{"id":23,"name":"task2","data":{},"class":"task2","html":"<div class='title-box'><i class='far fa-chart-bar'></i> Task #2</div>","typenode":false,"inputs":{},"outputs":{"output_1":{"connections":[]}},"pos_x":100,"pos_y":52}}}}}
         editor.start();
         editor.import(dataToImport);
 
         function clearTask() {
           editor.import(dataToImport);
         }
-
-        /*
-          var welcome = `
-          <div>
-            <div class="title-box">👏 Welcome!!</div>
-            <div class="box">
-              <p>Simple flow library <b>demo</b>
-              <a href="https://github.com/jerosoler/Drawflow" target="_blank">Drawflow</a> by <b>Jero Soler</b></p><br>
-      
-              <p>Multiple input / outputs<br>
-                 Data sync nodes<br>
-                 Import / export<br>
-                 Modules support<br>
-                 Simple use<br>
-                 Type: Fixed or Edit<br>
-                 Events: view console<br>
-                 Pure Javascript<br>
-              </p>
-              <br>
-              <p><b><u>Shortkeys:</u></b></p>
-              <p>🎹 <b>Delete</b> for remove selected<br>
-              💠 Mouse Left Click == Move<br>
-              ❌ Mouse Right == Delete Option<br>
-              🔍 Ctrl + Wheel == Zoom<br>
-              📱 Mobile support<br>
-              ...</p>
-            </div>
-          </div>
-          `;
-      */
-
-
-        //editor.addNode(name, inputs, outputs, posx, posy, class, data, html);
-        /*editor.addNode('welcome', 0, 0, 50, 50, 'welcome', {}, welcome );
-        editor.addModule('Other');
-        */
 
         // Events!
         editor.on('nodeCreated', function (id) {
@@ -325,6 +255,114 @@
 
         }
 
+        let isRunning = false;
+
+        function runTaskSequence(buttonEl) {
+          if (!isRunning) {
+            isRunning = true;
+            buttonEl.textContent = "Stop";
+            buttonEl.style.background = "#e53935";
+            buttonEl.style.border = "1px solid #b71c1c";
+
+            const visited = new Set();
+            const queue = [{ id: idTask, delay: 0 }];
+            let delayMs = 0;
+
+            while (queue.length > 0) {
+              const { id, delay } = queue.shift();
+
+              if (visited.has(id)) continue;
+              visited.add(id);
+
+              // activate the node with a delay
+              setTimeout(() => {
+                const el = document.querySelector(`#node-${id}`);
+                if (el) el.classList.add("active-node");
+              }, delay);
+
+              const node = editor.getNodeFromId(id);
+              if (!node || !node.outputs) continue;
+
+               if (node) {
+                  const command = node.data.command || node.name || `Node ${id}`;
+                  const args = node.data.args || "";
+                  const fullCommand = args ? `${command} ${args}` : command;
+                  console.log(`Run command: ${fullCommand}`);
+                }
+
+              for (let outputKey in node.outputs) {
+                const connections = node.outputs[outputKey].connections;
+                connections.forEach(conn => {
+                  const targetId = conn.node;
+                  if (!visited.has(targetId)) {
+                    queue.push({ id: targetId, delay: delay + 1000 });
+                  }
+                });
+              }
+            }
+          } else {
+            // Stop
+            isRunning = false;
+            buttonEl.textContent = "Start";
+            buttonEl.style.background = "#4caf50";
+            buttonEl.style.border = "1px solid #2e7d32";
+
+            // Remove active class from all nodes
+            document.querySelectorAll(".active-node").forEach(el => {
+              el.classList.remove("active-node");
+            });
+          }
+        }
+
+        let taskCounter = 2;
+
+        function addNewModule() {
+          taskCounter++;
+          const newModuleKey = "Task_" + taskCounter;
+          const newModuleName = "Task #" + taskCounter;
+          const nodeId = 100 + taskCounter;
+
+          const newModuleData = {
+            data: {
+              [nodeId]: {
+                id: nodeId,
+                name: "task" + taskCounter,
+                data: {},
+                class: "task" + taskCounter,
+                html: `<div class='title-box'><i class='far fa-chart-bar'></i> ${newModuleName}</div>`,
+                typenode: false,
+                inputs: {},
+                outputs: {
+                  output_1: { connections: [] }
+                },
+                pos_x: 100,
+                pos_y: 52
+              }
+            }
+          };
+
+          // Add module to drawflow
+          editor.addModule(newModuleKey);
+          editor.drawflow[newModuleKey] = newModuleData;
+          editor.changeModule(newModuleKey);
+
+          // Create new <li> with correct behavior
+          const li = document.createElement("li");
+          li.textContent = newModuleName;
+
+          // 👇 Add the correct event listener like the HTML inline version
+          li.onclick = function(event) {
+            editor.changeModule(newModuleKey);
+            changeModule(newModuleName, event);
+          };
+
+          // Insert before the "Add Module" button
+          document.getElementById("module-list").insertBefore(
+            li,
+            document.getElementById("add-module-button")
+          );
+        }
+
         function addNodeToDrawFlow(name, pos_x, pos_y) {
             if (editor.editor_mode === 'fixed') {
                 return false;
@@ -339,14 +377,14 @@
                   <div>
                     <div class="title-box"><i class="far fa-chart-bar"></i> Task #1</div>
                   </div>`;
-                editor.addNode('task1', 1, 1, pos_x, pos_y, 'task1', {}, template);
+                editor.addNode('task1', 0, 1, pos_x, pos_y, 'task1', {}, template);
                 break;
               case 'task2':
                 var template = `
                   <div>
                     <div class="title-box"><i class="far fa-chart-bar"></i> Task #2</div>
                   </div>`;
-                editor.addNode('task2', 1, 1, pos_x, pos_y, 'task2', {}, template);
+                editor.addNode('task2', 0, 1, pos_x, pos_y, 'task2', {}, template);
                 break;
               case 'statusMonitor':
                 var template = `
@@ -535,6 +573,50 @@
                   </div>
                   `;
                 editor.addNode('doJmove', 1, 1, pos_x, pos_y, 'doJmove', {}, template);
+                break;
+              case 'addSubtract':
+                var template = `
+                  <div>
+                    <div class="title-box"><i class="fas fa-play"></i> add/subtract</div>
+                    <div class="box">
+                      <p>x</p>
+                      <input type="text" df-name>
+                      <p>y</p>
+                      <input type="text" df-name>
+                      <p>z</p>
+                      <input type="text" df-name>
+                      <p>rx</p>
+                      <input type="text" df-name>
+                      <p>ry</p>
+                      <input type="text" df-name>
+                      <p>rz</p>
+                      <input type="text" df-name>
+                    </div>
+                  </div>
+                  `;
+                editor.addNode('addSubtract', 1, 1, pos_x, pos_y, 'addSubtract', {}, template);
+                break;
+              case 'multipleDivine':
+                var template = `
+                  <div>
+                    <div class="title-box"><i class="fas fa-play"></i> multiple/divine</div>
+                    <div class="box">
+                      <p>x</p>
+                      <input type="text" df-name>
+                      <p>y</p>
+                      <input type="text" df-name>
+                      <p>z</p>
+                      <input type="text" df-name>
+                      <p>rx</p>
+                      <input type="text" df-name>
+                      <p>ry</p>
+                      <input type="text" df-name>
+                      <p>rz</p>
+                      <input type="text" df-name>
+                    </div>
+                  </div>
+                  `;
+                editor.addNode('multipleDivine', 1, 1, pos_x, pos_y, 'multipleDivine', {}, template);
                 break;
               case 'doImove':
                 var template = `
@@ -779,7 +861,12 @@
             editor.editor_mode = "edit";
         }
 
-        function changeModule(event) {
+        function changeModule(task, event) {
+            if (task === 'Task #1') {
+              idTask = 22;
+            } else if (task === 'Task #2') {
+              idTask = 23;
+            }
             var all = document.querySelectorAll(".menu ul li");
             for (var i = 0; i < all.length; i++) {
                 all[i].classList.remove('selected');

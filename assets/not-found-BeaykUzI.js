@@ -1,1 +1,0 @@
-import{_ as a,c,a as e,b as t,F as _,r as n,o as d}from"./index-1OUVmTX5.js";const f="/assets/not-found-CdVIE--q.jpg",l={};function m(p,o){const s=n("NavBar"),r=n("Footer");return d(),c(_,null,[e(s),o[0]||(o[0]=t("div",{class:"content flex justify-center"},[t("img",{src:f,alt:"not found"})],-1)),e(r)],64)}const i=a(l,[["render",m]]);export{i as default};

@@ -1,63 +1,159 @@
+# ============================================================================
+# WORKFLOW CI/CD — gộp CI (kiểm tra code) và CD (phát hành) trong CÙNG 1 FILE
+#
+# Luồng chạy tổng quát:
+#
+#   push / PR vào main
+#          │
+#          ▼
+#   ┌──────────────┐   pass    ┌──────────────────────────┐
+#   │ job: test    │ ───────▶  │ job: build-and-push      │
+#   │ (CI)         │           │ (CD) — chỉ khi là push   │
+#   │ lint + test  │           │ vào main, KHÔNG chạy ở PR│
+#   └──────────────┘           └──────────────────────────┘
+#          │ fail
+#          ▼
+#   dừng luôn, không build image
+#
+# Vì 2 job nằm chung 1 file nên có thể nối chúng bằng "needs:" (xem job
+# build-and-push). Nếu tách thành 2 file riêng thì phải dùng "workflow_run",
+# phức tạp hơn và dễ sai (tên workflow gõ lệch là CD không bao giờ chạy).
+# ============================================================================
+
+# Tên workflow, hiển thị trong tab "Actions" trên GitHub.
 name: CI/CD
 
+# ----------------------------------------------------------------------------
+# "on:" — SỰ KIỆN nào sẽ kích hoạt workflow này?
+# ----------------------------------------------------------------------------
 on:
+  # (1) Khi có commit được push thẳng lên nhánh main
+  #     (bao gồm cả lúc merge 1 Pull Request vào main — merge cũng là 1 push).
   push:
     branches: ["main"]
+
+  # (2) Khi có người mở / cập nhật Pull Request có đích là nhánh main.
+  #     Mục đích: kiểm tra code TRƯỚC khi cho merge, để main luôn "xanh".
   pull_request:
     branches: ["main"]
 
+  # Lưu ý: push lên nhánh khác (vd: feature/abc) mà chưa mở PR thì
+  # workflow này KHÔNG chạy. Muốn chạy CI trên mọi nhánh thì đổi
+  # push.branches thành ["**"].
+
+# ----------------------------------------------------------------------------
+# "jobs:" — danh sách công việc. Mặc định các job chạy SONG SONG trên các
+# máy ảo khác nhau; muốn chạy tuần tự thì phải khai báo "needs:".
+# ----------------------------------------------------------------------------
 jobs:
-  # ---------- CI: chạy trên mọi push và pull request ----------
+
+  # ==========================================================================
+  # JOB 1 — CI (Continuous Integration): kiểm tra code có "sạch" và "đúng"
+  # Chạy cho CẢ push lẫn pull_request.
+  # ==========================================================================
   test:
+    # "test" (key ở trên) là ID để job khác tham chiếu (vd: needs: test).
+    # "name" chỉ là tên hiển thị cho người đọc trên giao diện GitHub.
     name: Lint & Test
+
+    # Máy ảo chạy job: GitHub cấp 1 VM Ubuntu mới tinh, chạy xong là xoá.
+    # => Mỗi lần chạy đều bắt đầu từ trạng thái sạch, không có gì sót lại.
     runs-on: ubuntu-latest
+
+    # Các bước chạy TUẦN TỰ từ trên xuống. 1 bước lỗi => job dừng, báo đỏ.
     steps:
+      # Bước 1: Lấy code của repo về máy ảo (VM lúc đầu trống trơn).
+      # "uses:" = dùng 1 action viết sẵn, thay vì tự viết lệnh shell.
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Bước 2: Cài Python. Nên khớp với phiên bản bạn dùng ở máy local.
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          # Cache thư mục pip giữa các lần chạy => lần sau cài gói nhanh hơn.
+          # Cache được làm mới khi file requirements*.txt thay đổi.
           cache: "pip"
 
+      # Bước 3: Cài thư viện. "run:" = chạy 1 lệnh shell bình thường.
+      # requirements-dev.txt chứa "-r requirements.txt" nên cài luôn cả
+      # thư viện chính (Flask...) lẫn công cụ dev (pytest, flake8).
       - name: Install dependencies
         run: pip install -r requirements-dev.txt
 
+      # Bước 4: LINT — đọc code (KHÔNG chạy) để bắt lỗi style / lỗi rõ ràng:
+      # import thừa, biến không dùng, thụt lề sai, dòng dài quá 100 ký tự...
+      # Chỉ quét thư mục app/ và file run.py.
       - name: Lint with flake8
         run: flake8 app run.py --max-line-length=100
 
+      # Bước 5: TEST — chạy code thật để kiểm tra LOGIC có đúng không.
+      # Dùng "python -m pytest" thay vì "pytest" để thư mục gốc được thêm
+      # vào sys.path => "from app import ..." trong tests/ import được.
+      # "-v" = in chi tiết từng test PASS/FAIL.
       - name: Run tests
         run: python -m pytest -v
 
-  # ---------- CD: chỉ chạy khi push vào main VÀ test đã pass ----------
+  # ==========================================================================
+  # JOB 2 — CD (Continuous Delivery): đóng gói app thành Docker image và
+  # đẩy lên GitHub Container Registry (ghcr.io).
+  # ==========================================================================
   build-and-push:
     name: Build & Push Docker image
+
+    # "needs: test" => job này CHỜ job "test" chạy xong VÀ thành công mới
+    # chạy. Nếu test fail, job này bị bỏ qua (skipped). Đây là "cổng chặn":
+    # code chưa qua kiểm tra thì không bao giờ được phát hành.
     needs: test
+
+    # Điều kiện thêm: chỉ chạy khi sự kiện là PUSH vào main.
+    # => Với pull_request: chỉ chạy CI (job test), KHÔNG build/push image,
+    #    vì code trong PR chưa được duyệt, chưa nên phát hành.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
     runs-on: ubuntu-latest
+
+    # Quyền của GITHUB_TOKEN trong job này. Mặc định nên cấp TỐI THIỂU,
+    # cần gì khai báo nấy (nguyên tắc "least privilege").
     permissions:
-      contents: read
-      packages: write   # cho phép push image lên GitHub Container Registry
+      contents: read    # chỉ đọc code, không ghi gì vào repo
+      packages: write   # BẮT BUỘC để push image lên ghcr.io
+
+    # Biến môi trường dùng chung cho các bước bên dưới.
     env:
       REGISTRY: ghcr.io
-      IMAGE_NAME: ${{ github.repository }}   # vd: yourname/flask-ci-cd-demo
+      # github.repository tự có dạng "owner/tên-repo".
+      # Lưu ý: tên image trên ghcr.io phải viết thường.
+      IMAGE_NAME: ${{ github.repository }}
+
     steps:
+      # Bước 1: Lấy code về. Job này chạy trên VM KHÁC với job test,
+      # nên phải checkout lại — các job không dùng chung ổ đĩa.
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Bước 2: Đăng nhập registry để có quyền push image.
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}   # tự động có sẵn, không cần tạo secret
+          username: ${{ github.actor }}            # người kích hoạt workflow
+          # GITHUB_TOKEN do GitHub tự sinh cho mỗi lần chạy, hết hạn khi
+          # job kết thúc. Không cần tự tạo secret. Quyền của nó chính là
+          # phần "permissions:" ở trên.
+          password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Bước 3: Build image từ Dockerfile ở thư mục gốc rồi push lên registry.
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
-          context: .
-          push: true
+          context: .       # thư mục chứa Dockerfile và code để build
+          push: true       # build xong thì đẩy lên luôn (false = chỉ build thử)
+          # Gắn 2 tag cho cùng 1 image:
+          # - latest       : luôn trỏ tới bản mới nhất, tiện "docker pull"
+          # - <commit SHA> : cố định theo từng commit, không bị ghi đè
+          #                  => dùng để rollback về đúng phiên bản cũ.
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}

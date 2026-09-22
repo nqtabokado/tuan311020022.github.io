@@ -28,7 +28,7 @@ jobs:
         run: flake8 app run.py --max-line-length=100
 
       - name: Run tests
-        run: pytest -v
+        run: python -m pytest -v
 
   # ---------- CD: chỉ chạy khi push vào main VÀ test đã pass ----------
   build-and-push:

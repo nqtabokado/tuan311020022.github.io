@@ -1,0 +1,79 @@
+# Tên workflow — hiện trong tab "Actions" trên GitHub.
+# QUAN TRỌNG: file cd.yml sẽ tham chiếu tới đúng chuỗi "CI" này
+# (qua workflow_run: workflows: ["CI"]) để biết cần lắng nghe workflow nào.
+# Đổi tên ở đây mà quên sửa bên cd.yml là lỗi rất hay gặp.
+name: CI
+
+# ============================================================
+# PHẦN "on:" — quyết định: WORKFLOW NÀY CHẠY KHI NÀO?
+# ============================================================
+on:
+  # (1) Kích hoạt mỗi khi có người PUSH code (commit trực tiếp, không qua PR)
+  push:
+    branches: ["**"]        # "**" = mọi nhánh, kể cả nhánh feature/, fix/...
+                             # Giống pattern AIST: dù code ở nhánh nào cũng
+                             # được kiểm tra ngay, không đợi tới khi mở PR
+                             # hay merge vào main mới biết code có lỗi.
+
+  # (2) Kích hoạt mỗi khi có người MỞ hoặc CẬP NHẬT Pull Request nhắm vào main
+  pull_request:
+    branches: ["main"]      # Chỉ quan tâm PR đích đến là nhánh main.
+                             # Đây là bước "chốt chặn" cuối: trước khi cho
+                             # phép merge, phải chắc code không làm hỏng gì.
+
+# ============================================================
+# PHẦN "jobs:" — danh sách các công việc (job) cần thực hiện.
+# CI này chỉ có 1 job duy nhất tên là "test".
+# ============================================================
+jobs:
+  test:
+    # Tên hiển thị của job trên giao diện GitHub Actions (khác với key "test"
+    # ở trên, key đó dùng để code tham chiếu, "name" chỉ để người xem dễ hiểu)
+    name: Lint & Test
+
+    # Máy ảo nào sẽ chạy job này. GitHub tự cấp phát 1 VM Ubuntu sạch,
+    # dùng xong huỷ luôn — không có gì tồn đọng giữa các lần chạy.
+    runs-on: ubuntu-latest
+
+    # "steps" — các bước chạy TUẦN TỰ trong job, bước sau chỉ chạy nếu
+    # bước trước không lỗi. Bước nào lỗi thì cả job dừng lại và báo đỏ.
+    steps:
+      # Bước 1: Tải code từ repo về máy ảo.
+      # Bắt buộc phải có bước này đầu tiên — máy ảo lúc mới cấp phát
+      # KHÔNG có sẵn code của bạn, phải "checkout" (clone) về trước.
+      - name: Checkout code
+        uses: actions/checkout@v4   # dùng action có sẵn do GitHub cung cấp,
+                                     # không phải viết tay lệnh git clone
+
+      # Bước 2: Cài Python đúng phiên bản mình muốn dùng.
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"    # phải khớp (hoặc tương thích) với phiên
+                                     # bản Python bạn dùng lúc code/test local
+          cache: "pip"               # cache lại các gói đã pip install, để
+                                     # lần chạy sau không phải tải lại từ đầu
+                                     # (giúp CI chạy nhanh hơn đáng kể)
+
+      # Bước 3: Cài các thư viện project cần — bao gồm cả Flask (để app
+      # chạy được) lẫn pytest/flake8 (để có công cụ test và lint).
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+        # requirements-dev.txt có dòng "-r requirements.txt" nên lệnh này
+        # cài luôn cả dependency chính lẫn dependency chỉ dùng khi dev/test.
+
+      # Bước 4: Lint — kiểm tra STYLE và các lỗi cú pháp rõ ràng
+      # (biến không dùng, thụt lề sai, dòng quá dài...), KHÔNG chạy code.
+      - name: Lint with flake8
+        run: flake8 app run.py --max-line-length=100
+        # Chỉ quét 2 nơi: thư mục app/ và file run.py — không quét tests/,
+        # vì test code không cần soi khắt khe như code chạy thật.
+
+      # Bước 5: Chạy toàn bộ test thật sự — TEST LOGIC có đúng không.
+      - name: Run tests
+        run: python -m pytest -v
+        # Dùng "python -m pytest" (không gọi thẳng "pytest") để Python tự
+        # thêm thư mục gốc project vào sys.path, nhờ đó "from app import
+        # create_app" trong tests/test_app.py mới import được — đây chính
+        # là chỗ đã từng gây lỗi ModuleNotFoundError trước đó.
+        # "-v" (verbose) để in ra tên từng test đã PASS/FAIL, dễ đọc log hơn.

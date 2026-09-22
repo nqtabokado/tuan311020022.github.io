@@ -1,0 +1,21 @@
+# Chạy cả client + server bằng 1 lệnh:  docker compose up --build
+#   - API Flask : http://localhost:5000
+#   - Web Vue   : http://localhost:8080
+services:
+  server:
+    build: ./server
+    ports:
+      - "5000:5000"
+
+  client:
+    build:
+      context: ./client
+      args:
+        # Trình duyệt chạy trên MÁY THẬT, không nằm trong mạng của Docker,
+        # nên địa chỉ API phải là localhost:5000 (cổng đã publish ở trên),
+        # KHÔNG phải http://server:5000 (tên đó chỉ dùng được giữa các container).
+        VUE_APP_API_BASE_URL: http://localhost:5000
+    ports:
+      - "8080:80"
+    depends_on:
+      - server

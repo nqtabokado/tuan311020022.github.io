@@ -27,3 +27,10 @@ def test_sum(client):
     assert resp.status_code == 200
     data = resp.get_json()
     assert data["result"] == 5
+
+
+def test_cors_header(client):
+    """Client Vue chạy ở origin khác, nên API phải trả header CORS."""
+    resp = client.get("/health", headers={"Origin": "http://localhost:8080"})
+    assert resp.status_code == 200
+    assert resp.headers.get("Access-Control-Allow-Origin") is not None

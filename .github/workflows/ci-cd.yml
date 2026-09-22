@@ -1,26 +1,30 @@
 # ============================================================================
-# WORKFLOW CI/CD — gộp CI (kiểm tra code) và CD (phát hành) trong CÙNG 1 FILE
+# WORKFLOW CI/CD cho project 2 phần: client (Vue 2) + server (Flask)
 #
 # Luồng chạy tổng quát:
 #
 #   push / PR vào main
 #          │
-#          ▼
-#   ┌──────────────┐   pass    ┌──────────────────────────┐
-#   │ job: test    │ ───────▶  │ job: build-and-push      │
-#   │ (CI)         │           │ (CD) — chỉ khi là push   │
-#   │ lint + test  │           │ vào main, KHÔNG chạy ở PR│
-#   └──────────────┘           └──────────────────────────┘
-#          │ fail
-#          ▼
-#   dừng luôn, không build image
+#          ├──────────────┬──────────────┐
+#          ▼              ▼              │
+#   ┌─────────────┐ ┌─────────────┐      │  2 job CI chạy SONG SONG
+#   │ test-server │ │ test-client │      │  (mỗi job 1 máy ảo riêng)
+#   │ flake8      │ │ eslint      │      │
+#   │ pytest      │ │ jest + build│      │
+#   └─────────────┘ └─────────────┘      │
+#          │              │              │
+#          └──────┬───────┘              │
+#                 ▼ cả hai đều pass      │
+#   ┌──────────────────────────────┐     │
+#   │ job: build-and-push (CD)     │ ◀───┘
+#   │ build 2 image: server+client │
+#   │ chỉ khi push vào main        │
+#   └──────────────────────────────┘
 #
-# Vì 2 job nằm chung 1 file nên có thể nối chúng bằng "needs:" (xem job
-# build-and-push). Nếu tách thành 2 file riêng thì phải dùng "workflow_run",
-# phức tạp hơn và dễ sai (tên workflow gõ lệch là CD không bao giờ chạy).
+# Chỉ cần 1 job CI fail là job CD bị bỏ qua: code chưa qua kiểm tra thì
+# không bao giờ được đóng gói phát hành.
 # ============================================================================
 
-# Tên workflow, hiển thị trong tab "Actions" trên GitHub.
 name: CI/CD
 
 # ----------------------------------------------------------------------------
@@ -37,33 +41,24 @@ on:
   pull_request:
     branches: ["main"]
 
-  # Lưu ý: push lên nhánh khác (vd: feature/abc) mà chưa mở PR thì
-  # workflow này KHÔNG chạy. Muốn chạy CI trên mọi nhánh thì đổi
-  # push.branches thành ["**"].
-
-# ----------------------------------------------------------------------------
-# "jobs:" — danh sách công việc. Mặc định các job chạy SONG SONG trên các
-# máy ảo khác nhau; muốn chạy tuần tự thì phải khai báo "needs:".
-# ----------------------------------------------------------------------------
 jobs:
 
   # ==========================================================================
-  # JOB 1 — CI (Continuous Integration): kiểm tra code có "sạch" và "đúng"
-  # Chạy cho CẢ push lẫn pull_request.
+  # JOB 1 — CI phía SERVER (Flask): lint + unit test Python
   # ==========================================================================
-  test:
-    # "test" (key ở trên) là ID để job khác tham chiếu (vd: needs: test).
-    # "name" chỉ là tên hiển thị cho người đọc trên giao diện GitHub.
-    name: Lint & Test
-
-    # Máy ảo chạy job: GitHub cấp 1 VM Ubuntu mới tinh, chạy xong là xoá.
-    # => Mỗi lần chạy đều bắt đầu từ trạng thái sạch, không có gì sót lại.
+  test-server:
+    name: Server — Lint & Test (Flask)
     runs-on: ubuntu-latest
 
-    # Các bước chạy TUẦN TỰ từ trên xuống. 1 bước lỗi => job dừng, báo đỏ.
+    # "defaults.run.working-directory" = mọi lệnh "run:" trong job này đều
+    # được chạy sẵn trong thư mục server/, khỏi phải "cd server" từng bước.
+    # Lưu ý: nó KHÔNG ảnh hưởng tới các bước dùng "uses:".
+    defaults:
+      run:
+        working-directory: server
+
     steps:
       # Bước 1: Lấy code của repo về máy ảo (VM lúc đầu trống trơn).
-      # "uses:" = dùng 1 action viết sẵn, thay vì tự viết lệnh shell.
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -73,42 +68,86 @@ jobs:
         with:
           python-version: "3.12"
           # Cache thư mục pip giữa các lần chạy => lần sau cài gói nhanh hơn.
-          # Cache được làm mới khi file requirements*.txt thay đổi.
+          # Cache làm mới khi file requirements*.txt thay đổi; vì file nằm
+          # trong server/ nên phải chỉ đường dẫn rõ ràng cho action.
           cache: "pip"
+          cache-dependency-path: server/requirements*.txt
 
-      # Bước 3: Cài thư viện. "run:" = chạy 1 lệnh shell bình thường.
-      # requirements-dev.txt chứa "-r requirements.txt" nên cài luôn cả
-      # thư viện chính (Flask...) lẫn công cụ dev (pytest, flake8).
+      # Bước 3: Cài thư viện. requirements-dev.txt chứa "-r requirements.txt"
+      # nên cài luôn cả thư viện chính (Flask...) lẫn công cụ dev.
       - name: Install dependencies
         run: pip install -r requirements-dev.txt
 
       # Bước 4: LINT — đọc code (KHÔNG chạy) để bắt lỗi style / lỗi rõ ràng:
       # import thừa, biến không dùng, thụt lề sai, dòng dài quá 100 ký tự...
-      # Chỉ quét thư mục app/ và file run.py.
       - name: Lint with flake8
         run: flake8 app run.py --max-line-length=100
 
       # Bước 5: TEST — chạy code thật để kiểm tra LOGIC có đúng không.
-      # Dùng "python -m pytest" thay vì "pytest" để thư mục gốc được thêm
-      # vào sys.path => "from app import ..." trong tests/ import được.
-      # "-v" = in chi tiết từng test PASS/FAIL.
+      # Dùng "python -m pytest" thay vì "pytest" để thư mục hiện tại được
+      # thêm vào sys.path => "from app import ..." trong tests/ import được.
       - name: Run tests
         run: python -m pytest -v
 
   # ==========================================================================
-  # JOB 2 — CD (Continuous Delivery): đóng gói app thành Docker image và
-  # đẩy lên GitHub Container Registry (ghcr.io).
+  # JOB 2 — CI phía CLIENT (Vue 2): lint + unit test + thử build
+  # Không khai báo "needs:" nên job này chạy SONG SONG với test-server.
+  # ==========================================================================
+  test-client:
+    name: Client — Lint, Test & Build (Vue 2)
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: client
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Cài Node. Cache theo package-lock.json: lock file chưa đổi thì
+      # lần chạy sau lấy lại cache npm, đỡ phải tải lại từ đầu.
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: client/package-lock.json
+
+      # "npm ci" khác "npm install": cài ĐÚNG version ghi trong
+      # package-lock.json và xoá node_modules cũ trước khi cài
+      # => máy ai chạy cũng ra kết quả giống nhau. Luôn dùng npm ci trong CI.
+      - name: Install dependencies
+        run: npm ci
+
+      # LINT — ESLint. "--no-fix" để CI chỉ BÁO lỗi chứ không tự sửa;
+      # CI sửa code thì lỗi bị giấu đi, lần sau vẫn commit sai như cũ.
+      - name: Lint with ESLint
+        run: npm run lint -- --no-fix
+
+      # TEST — Jest + @vue/test-utils. Các test đã mock module gọi API nên
+      # KHÔNG cần server Flask chạy kèm.
+      - name: Run unit tests
+        run: npm run test:unit
+
+      # BUILD — bước bảo vệ cuối: code có thể qua được lint và test nhưng
+      # vẫn vỡ lúc build (import sai đường dẫn, lỗi cú pháp template...).
+      - name: Build production bundle
+        run: npm run build
+
+  # ==========================================================================
+  # JOB 3 — CD (Continuous Delivery): đóng gói 2 image và đẩy lên
+  # GitHub Container Registry (ghcr.io).
   # ==========================================================================
   build-and-push:
-    name: Build & Push Docker image
+    name: Build & Push Docker images
 
-    # "needs: test" => job này CHỜ job "test" chạy xong VÀ thành công mới
-    # chạy. Nếu test fail, job này bị bỏ qua (skipped). Đây là "cổng chặn":
-    # code chưa qua kiểm tra thì không bao giờ được phát hành.
-    needs: test
+    # "needs: [a, b]" => chờ CẢ HAI job CI xong VÀ thành công mới chạy.
+    # Chỉ cần 1 job fail thì job này bị bỏ qua (skipped). Đây là "cổng chặn".
+    needs: [test-server, test-client]
 
     # Điều kiện thêm: chỉ chạy khi sự kiện là PUSH vào main.
-    # => Với pull_request: chỉ chạy CI (job test), KHÔNG build/push image,
+    # => Với pull_request: chỉ chạy CI, KHÔNG build/push image,
     #    vì code trong PR chưa được duyệt, chưa nên phát hành.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
@@ -120,20 +159,29 @@ jobs:
       contents: read    # chỉ đọc code, không ghi gì vào repo
       packages: write   # BẮT BUỘC để push image lên ghcr.io
 
-    # Biến môi trường dùng chung cho các bước bên dưới.
+    # "strategy.matrix" = chạy job này NHIỀU LẦN, mỗi lần thay 1 bộ biến.
+    # Ở đây thành 2 lượt chạy song song: 1 cho server, 1 cho client.
+    # Nhờ vậy khỏi phải copy-paste y hệt các bước build cho từng image.
+    strategy:
+      matrix:
+        include:
+          - name: server      # -> ghcr.io/<owner>/<repo>/server
+            context: ./server
+          - name: client      # -> ghcr.io/<owner>/<repo>/client
+            context: ./client
+
     env:
       REGISTRY: ghcr.io
-      # github.repository tự có dạng "owner/tên-repo".
+      # github.repository có dạng "owner/tên-repo".
       # Lưu ý: tên image trên ghcr.io phải viết thường.
-      IMAGE_NAME: ${{ github.repository }}
+      IMAGE_NAME: ${{ github.repository }}/${{ matrix.name }}
 
     steps:
-      # Bước 1: Lấy code về. Job này chạy trên VM KHÁC với job test,
-      # nên phải checkout lại — các job không dùng chung ổ đĩa.
+      # Job này chạy trên VM KHÁC với 2 job CI, nên phải checkout lại —
+      # các job không dùng chung ổ đĩa.
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Bước 2: Đăng nhập registry để có quyền push image.
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -144,11 +192,12 @@ jobs:
           # phần "permissions:" ở trên.
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Bước 3: Build image từ Dockerfile ở thư mục gốc rồi push lên registry.
-      - name: Build and push image
+      - name: Build and push ${{ matrix.name }} image
         uses: docker/build-push-action@v6
         with:
-          context: .       # thư mục chứa Dockerfile và code để build
+          # context = thư mục chứa Dockerfile và code để build.
+          # Lượt chạy nào thì lấy đúng thư mục của lượt đó.
+          context: ${{ matrix.context }}
           push: true       # build xong thì đẩy lên luôn (false = chỉ build thử)
           # Gắn 2 tag cho cùng 1 image:
           # - latest       : luôn trỏ tới bản mới nhất, tiện "docker pull"

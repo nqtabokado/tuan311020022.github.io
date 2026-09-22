@@ -50,7 +50,7 @@ Workflow (1 file .yml trong .github/workflows/)
 |---|---|---|
 | **Workflow** | Một quy trình tự động, định nghĩa trong 1 file YAML | `name: CI/CD` |
 | **Event** | Sự kiện kích hoạt workflow | `on: push`, `on: pull_request` |
-| **Job** | Một nhóm step chạy trên cùng 1 máy | `test`, `build-and-push` |
+| **Job** | Một nhóm step chạy trên cùng 1 máy | `test-server`, `test-client`, `build-and-push` |
 | **Runner** | Máy ảo chạy job, GitHub cấp mới mỗi lần và xoá khi chạy xong | `runs-on: ubuntu-latest` |
 | **Step** | Một bước trong job | `Checkout code`, `Run tests`... |
 | **Action** | Đoạn code dùng lại được, người khác viết sẵn | `actions/checkout@v4` |
@@ -169,8 +169,12 @@ Workflow này gắn **2 tag** cho mỗi image:
 Cách lấy image về chạy:
 
 ```bash
-docker pull ghcr.io/<owner>/<repo>:latest
-docker run -p 5000:5000 ghcr.io/<owner>/<repo>:latest
+# Project này build 2 image, nên tên image có thêm 1 đoạn ở cuối:
+docker pull ghcr.io/<owner>/<repo>/server:latest
+docker run -p 5000:5000 ghcr.io/<owner>/<repo>/server:latest
+
+docker pull ghcr.io/<owner>/<repo>/client:latest
+docker run -p 8080:80 ghcr.io/<owner>/<repo>/client:latest
 ```
 
 ---
@@ -178,6 +182,40 @@ docker run -p 5000:5000 ghcr.io/<owner>/<repo>:latest
 ## 9. Cache
 
 `cache: "pip"` lưu lại các gói pip đã tải cho lần chạy sau, nhờ đó CI nhanh hơn đáng kể. Cache được tạo lại khi file `requirements*.txt` thay đổi.
+
+Repo này có 2 phần nên mỗi job dùng 1 loại cache riêng, và vì file khai báo dependency **không nằm ở thư mục gốc** nên phải chỉ đường dẫn rõ ràng:
+
+```yaml
+# job test-server
+cache: "pip"
+cache-dependency-path: server/requirements*.txt
+
+# job test-client
+cache: "npm"
+cache-dependency-path: client/package-lock.json
+```
+
+Thiếu `cache-dependency-path`, action sẽ tìm file ở thư mục gốc, không thấy và báo lỗi.
+
+---
+
+## 9b. Một repo chứa nhiều phần (monorepo)
+
+Khi client và server nằm chung 1 repo, mỗi job CI cần chạy lệnh trong đúng thư mục của mình:
+
+```yaml
+jobs:
+  test-client:
+    defaults:
+      run:
+        working-directory: client   # mọi "run:" của job này chạy trong client/
+```
+
+Ba điểm cần nhớ:
+
+1. `working-directory` **chỉ áp dụng cho `run:`**, không áp dụng cho `uses:`. Vì vậy các tham số đường dẫn của action (như `cache-dependency-path`) vẫn phải viết đầy đủ từ gốc repo.
+2. `actions/checkout` luôn lấy **toàn bộ** repo, không cắt riêng 1 thư mục.
+3. Với Docker, mỗi phần có `Dockerfile` riêng và `context` riêng (`./server`, `./client`). Docker chỉ nhìn thấy file bên trong context, nên `Dockerfile` trong `server/` không `COPY` được file của `client/`.
 
 ---
 
@@ -202,7 +240,8 @@ docker run -p 5000:5000 ghcr.io/<owner>/<repo>:latest
 | `ModuleNotFoundError` khi chạy test | Chạy `pytest` thay vì `python -m pytest`, hoặc thiếu thư viện trong requirements |
 | `denied: permission_denied` khi push image | Thiếu `packages: write` |
 | `Failed to get ID Token` | Thiếu `id-token: write` (thường gặp khi deploy Pages hoặc đăng nhập cloud bằng OIDC) |
-| Job CD bị `skipped` | Job `test` fail, hoặc điều kiện `if:` không thoả (vd: đang là PR) |
+| Job CD bị `skipped` | Một trong hai job `test-server` / `test-client` fail, hoặc điều kiện `if:` không thoả (vd: đang là PR) |
+| CI đỏ ở bước `npm ci` | `package-lock.json` chưa commit, hoặc lệch với `package.json` (sửa: chạy `npm install` ở local rồi commit lại lock file) |
 | Tên image lỗi `repository name must be lowercase` | Tên owner hoặc repo có chữ hoa |
 
 ---
@@ -210,8 +249,9 @@ docker run -p 5000:5000 ghcr.io/<owner>/<repo>:latest
 ## 12. Bài tập tự luyện
 
 1. Viết một test fail cố ý, push lên và xem job `build-and-push` bị **skipped**.
-2. Mở một PR vào main và quan sát: chỉ job `test` chạy, job CD không chạy. Giải thích tại sao.
+2. Mở một PR vào main và quan sát: chỉ 2 job `test-server` / `test-client` chạy, job CD không chạy. Giải thích tại sao.
 3. Thêm `workflow_dispatch:` vào `on:` để có nút chạy workflow bằng tay.
 4. Đổi `push.branches` thành `["**"]` để CI chạy trên mọi nhánh. Job CD có bị ảnh hưởng không? (Gợi ý: xem `if:`.)
-5. Dùng `strategy.matrix` để chạy test trên cả Python `3.11` và `3.12`.
+5. Dùng `strategy.matrix` để chạy `test-server` trên cả Python `3.11` và `3.12`. (Job `build-and-push` đã dùng matrix sẵn — xem cách nó build 2 image.)
 6. Sau khi image lên `ghcr.io`, `docker pull` về máy và chạy thử.
+7. Thêm `paths:` vào `on:` để job `test-client` chỉ chạy khi có file trong `client/` thay đổi. Cẩn thận: job bị lọc ra sẽ không chạy, mà `build-and-push` lại `needs:` nó.

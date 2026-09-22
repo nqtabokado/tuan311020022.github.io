@@ -1,8 +1,13 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 
 
 def create_app():
     app = Flask(__name__)
+
+    # Cho phép client Vue (chạy ở cổng khác, vd 8080) gọi API này.
+    # Trình duyệt chặn request cross-origin nếu server không trả header CORS.
+    CORS(app)
 
     @app.route("/")
     def index():

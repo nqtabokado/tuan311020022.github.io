@@ -1,7 +1,12 @@
 # Vue 2 + Flask CI/CD Demo
 
 Project nhỏ để tự học CI/CD với GitHub Actions + Docker.
-Gồm 2 phần tách rời: **client** (Vue 2) gọi API của **server** (Flask).
+Gồm 2 phần tách rời:
+
+- **client** (Vue 2) — trang **lý thuyết CI/CD & Docker**, kèm phần gọi API thật và bài tự kiểm tra.
+- **server** (Flask) — API mà client gọi sang.
+
+Trang client cố ý nói về đúng pipeline đang chạy trong repo này, nên đọc lý thuyết xong là mở [ci-cd.yml](.github/workflows/ci-cd.yml) ra đối chiếu được ngay.
 
 ## Cấu trúc
 
@@ -9,10 +14,16 @@ Gồm 2 phần tách rời: **client** (Vue 2) gọi API của **server** (Flask
 .
 ├── client/                     # Frontend — Vue 2 (Vue CLI 5)
 │   ├── src/
-│   │   ├── api/client.js       # Lớp gọi API bằng axios
+│   │   ├── content/
+│   │   │   ├── lessons.js      # TOÀN BỘ nội dung lý thuyết (dạng dữ liệu)
+│   │   │   └── quiz.js         # Câu hỏi tự kiểm tra
 │   │   ├── components/
-│   │   │   ├── HealthCard.vue      # gọi GET / và GET /health
-│   │   │   └── SumCalculator.vue   # gọi GET /sum/<a>/<b>
+│   │   │   ├── TheSidebar.vue      # mục lục, gom nhóm + tô sáng mục đang đọc
+│   │   │   ├── LessonSection.vue   # khung một bài học
+│   │   │   ├── ContentBlock.vue    # render 1 block theo type (p/code/table/note...)
+│   │   │   ├── ApiDemo.vue         # gọi API Flask thật để minh hoạ
+│   │   │   └── QuizBox.vue         # chấm điểm + hiện lời giải
+│   │   ├── api/client.js       # Lớp gọi API bằng axios
 │   │   ├── App.vue
 │   │   └── main.js
 │   ├── tests/unit/             # Unit test bằng Jest + @vue/test-utils
@@ -71,7 +82,29 @@ npm run lint                     # kiểm tra style
 npm run serve                    # chạy dev server -> http://localhost:8080
 ```
 
-Mở http://localhost:8080. Nếu server chưa chạy, trang sẽ hiện "Không gọi được API".
+Mở http://localhost:8080.
+
+Phần lý thuyết là nội dung tĩnh nên **đọc được kể cả khi server Flask chưa chạy** — chỉ riêng mục "Gọi API Flask thật" sẽ báo "Không gọi được API".
+
+### Sửa nội dung bài học
+
+Toàn bộ chữ nghĩa nằm ở [client/src/content/lessons.js](client/src/content/lessons.js), tách hẳn khỏi giao diện. Thêm một bài là thêm một object vào mảng, không phải đụng tới component nào:
+
+```js
+{
+  id: "bai-moi",            // dùng làm anchor #bai-moi, không được trùng
+  part: "Docker",           // nhóm hiển thị ở mục lục
+  title: "Tên bài",
+  blocks: [
+    { type: "p", text: "Một đoạn văn." },
+    { type: "code", lang: "bash", text: "docker ps" },
+    { type: "table", head: ["A", "B"], rows: [["a1", "b1"]] },
+    { type: "note", tone: "warn", text: "Điều cần cẩn thận." },
+  ],
+}
+```
+
+Các `type` hợp lệ: `p`, `list`, `steps`, `code`, `table`, `note`. Gõ sai type thì test `lessons.spec.js` sẽ báo đỏ, và trang cũng in ra chỗ sai thay vì im lặng bỏ qua.
 
 > Muốn trỏ client sang API khác thì sửa `VUE_APP_API_BASE_URL` trong [client/.env](client/.env). Giá trị này được **nhúng vào bundle lúc build**, nên sửa xong phải chạy lại `npm run serve` / `npm run build`.
 
@@ -156,4 +189,6 @@ docker run -p 5000:5000 ghcr.io/<username>/<repo>/server:latest
 
 - Workflow có 3 job; job CD phụ thuộc cả 2 job CI (`needs: [test-server, test-client]`) — đúng tinh thần CI/CD: không bao giờ build/deploy code chưa qua test.
 - Unit test của client **mock** module `src/api/client.js`, nên chạy được mà không cần server Flask — CI nhờ vậy nhanh và không "đỏ" vì lý do vặt.
+- Nội dung bài học được test như dữ liệu: trùng `id`, sai `type`, bảng lệch số cột đều bị bắt trong [lessons.spec.js](client/tests/unit/lessons.spec.js).
+- [README_CI_CD.md](README_CI_CD.md) là bản văn bản đầy đủ hơn; trang client là bản rút gọn, có tương tác.
 - Nếu sau này muốn đổi sang Docker Hub, chỉ cần thay lại bước login/tag trong `ci-cd.yml` và thêm 2 secret `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`.
